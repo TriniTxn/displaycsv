@@ -11,11 +11,15 @@ def display_file():
         return "No file"
 
     try:
-        df = pd.read_csv(file, encoding='latin1', delimiter=";")
+        df = pd.read_csv(file, delimiter=";")
     except UnicodeDecodeError:
         file.seek(0)
         try:
+            df = pd.read_csv(file, encoding='latin1', delimiter=";")
+        except UnicodeDecodeError:
+            file.seek(0)
             df = pd.read_csv(file, encoding='ISO-8859-1', delimiter=";")
+    return render_template('display.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
 
     return render_template('display.html', tables=[df.to_html(classes='data')], titles=df.columns.values)
 if __name__ == '__main__':
